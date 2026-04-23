@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Dark green rounded square background -->
+  <rect width="32" height="32" rx="7" fill="#14532d"/>
+  <!-- Trunk -->
+  <rect x="14" y="22" width="4" height="7" rx="1.5" fill="#86efac"/>
+  <!-- Canopy: three stacked triangles -->
+  <polygon points="16,20 9,28 23,28" fill="#4ade80"/>
+  <polygon points="16,13 8,23 24,23" fill="#22c55e"/>
+  <polygon points="16,5 9,17 23,17" fill="#16a34a"/>
+</svg>

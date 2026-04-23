@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Family tree connector lines */
+.rd3t-link {
+  stroke: #94a3b8 !important;
+  stroke-width: 1.5px !important;
+  fill: none !important;
+}
+
+/* Hide the default circle node react-d3-tree renders */
+.rd3t-node circle,
+.rd3t-leaf-node circle {
+  display: none !important;
+}
+
+/* Button press feedback — scale down slightly on click */
+button:not(:disabled),
+a[class*="rounded"] {
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+button:not(:disabled):active,
+a[class*="rounded"]:active {
+  transform: scale(0.96);
+}
+
+/* Page fade-in on mount */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-fade {
+  animation: pageFadeIn 0.18s ease-out both;
+}
