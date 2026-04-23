@@ -22,45 +22,40 @@ function parseDateSort(dateText) {
   return null;
 }
 
-// GET /api/events?individual_id=&family_id=
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const db = getDb();
   const { individual_id, family_id } = req.query;
   if (individual_id) {
-    return res.json(db.prepare('SELECT * FROM events WHERE individual_id=? ORDER BY date_sort NULLS LAST').all(individual_id));
+    return res.json(await db.all('SELECT * FROM events WHERE individual_id=? ORDER BY date_sort NULLS LAST', individual_id));
   }
   if (family_id) {
-    return res.json(db.prepare('SELECT * FROM events WHERE family_id=? ORDER BY date_sort NULLS LAST').all(family_id));
+    return res.json(await db.all('SELECT * FROM events WHERE family_id=? ORDER BY date_sort NULLS LAST', family_id));
   }
   res.json([]);
 });
 
-// POST /api/events
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const db = getDb();
   const { individual_id, family_id, event_type, date_text, place, note } = req.body;
   const date_sort = parseDateSort(date_text);
-  const result = db.prepare(
-    'INSERT INTO events (individual_id,family_id,event_type,date_text,date_sort,place,note) VALUES (?,?,?,?,?,?,?)'
-  ).run(individual_id || null, family_id || null, event_type, date_text || null, date_sort, place || null, note || null);
-  const ev = db.prepare('SELECT * FROM events WHERE id=?').get(result.lastInsertRowid);
-  res.status(201).json(ev);
+  const result = await db.run(
+    'INSERT INTO events (individual_id,family_id,event_type,date_text,date_sort,place,note) VALUES (?,?,?,?,?,?,?)',
+    individual_id || null, family_id || null, event_type, date_text || null, date_sort, place || null, note || null
+  );
+  res.status(201).json(await db.get('SELECT * FROM events WHERE id=?', result.lastInsertRowid));
 });
 
-// PUT /api/events/:id
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   const db = getDb();
   const { event_type, date_text, place, note } = req.body;
   const date_sort = parseDateSort(date_text);
-  db.prepare('UPDATE events SET event_type=?,date_text=?,date_sort=?,place=?,note=? WHERE id=?')
-    .run(event_type, date_text || null, date_sort, place || null, note || null, req.params.id);
-  res.json(db.prepare('SELECT * FROM events WHERE id=?').get(req.params.id));
+  await db.run('UPDATE events SET event_type=?,date_text=?,date_sort=?,place=?,note=? WHERE id=?',
+    event_type, date_text || null, date_sort, place || null, note || null, req.params.id);
+  res.json(await db.get('SELECT * FROM events WHERE id=?', req.params.id));
 });
 
-// DELETE /api/events/:id
-router.delete('/:id', (req, res) => {
-  const db = getDb();
-  db.prepare('DELETE FROM events WHERE id=?').run(req.params.id);
+router.delete('/:id', async (req, res) => {
+  await getDb().run('DELETE FROM events WHERE id=?', req.params.id);
   res.json({ ok: true });
 });
 

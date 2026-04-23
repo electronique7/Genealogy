@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: '/api', withCredentials: true });
+const BASE = import.meta.env.VITE_API_URL || '/api';
+
+const api = axios.create({ baseURL: BASE });
+
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('auth_token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 // Auth
 export const getMe     = ()           => api.get('/auth/me').then(r => r.data);

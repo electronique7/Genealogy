@@ -1,17 +1,19 @@
-// Require a valid session; attaches req.user
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'genealogy-dev-jwt-secret-change-in-production';
+
 function requireAuth(req, res, next) {
-  if (!req.session?.userId) {
+  const header = req.headers.authorization;
+  if (!header?.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
-  req.user = {
-    id:       req.session.userId,
-    username: req.session.username,
-    role:     req.session.role,
-  };
-  next();
+  try {
+    req.user = jwt.verify(header.slice(7), JWT_SECRET);
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
 }
 
-// Require one of the listed roles (always implies requireAuth first)
 function requireRole(...roles) {
   return [
     requireAuth,
@@ -24,4 +26,4 @@ function requireRole(...roles) {
   ];
 }
 
-module.exports = { requireAuth, requireRole };
+module.exports = { requireAuth, requireRole, JWT_SECRET };
