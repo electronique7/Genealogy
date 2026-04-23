@@ -1,4 +1,4 @@
-const { createClient } = require('@libsql/client');
+const { createClient } = require('@libsql/client/http');
 
 const TURSO_URL = process.env.TURSO_URL;
 const TURSO_AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN;
