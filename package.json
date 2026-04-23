@@ -4,9 +4,13 @@
   "private": true,
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "nodemon --exec 'node --experimental-sqlite' server/index.js",
+    "server": "nodemon server/index.js",
     "client": "cd client && npm run dev",
-    "import": "node --experimental-sqlite scripts/import-gedcom.js \"./reinsel (6).ged\" genealogy.db"
+    "import": "node --experimental-sqlite scripts/import-gedcom.js \"./reinsel (6).ged\" genealogy.db",
+    "migrate": "node scripts/migrate-to-turso.js"
+  },
+  "dependencies": {
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
